@@ -9,5 +9,6 @@ public struct LookInfo
 	public string Type;
 	public Vector2 position;
 	public float angle;
-	
+	public Vector2 point;
+	public float Distance;
 }

@@ -1,5 +1,6 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
+using System.Linq;
 using UnityEngine;
 
 public class LevelControl : MonoBehaviour
@@ -19,5 +20,15 @@ public class LevelControl : MonoBehaviour
 			GamobjList.RemoveAt(i);
 			break;
 		}
+	}
+
+	public void ResetHero()
+	{
+		var hero = GamobjList.First(dinfo => dinfo.Name == "myhero");
+		if (hero)
+		{
+			hero.transform.localPosition = new Vector3(-1.2f, 0, 0);
+		}
+		
 	}
 }

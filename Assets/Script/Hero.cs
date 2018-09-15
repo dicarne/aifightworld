@@ -60,11 +60,11 @@ public class Hero : LuaRunner
         // TODO: 旋转方向不对
         if (diff > 0)
         {
-            transform.Rotate(0, 0, 30.0f * Time.deltaTime);
+            transform.Rotate(0, 0, 60.0f * Time.deltaTime);
         }
         else
         {
-            transform.Rotate(0, 0, -30.0f * Time.deltaTime);
+            transform.Rotate(0, 0, -60.0f * Time.deltaTime);
         }
     }
 
@@ -82,7 +82,9 @@ public class Hero : LuaRunner
                 position = new Vector2(hitobj.transform.position.x, hitobj.transform.position.y),
                 angle = hitobj.transform.eulerAngles.z,
                 Name = hitobj.transform.gameObject.GetComponent<IDinfo>().Name,
-                Type = hitobj.transform.gameObject.GetComponent<IDinfo>().Type
+                Type = hitobj.transform.gameObject.GetComponent<IDinfo>().Type,
+                point = hitobj.point,
+                Distance = hitobj.distance
             }).ToList();
     }
 
@@ -96,7 +98,7 @@ public class Hero : LuaRunner
     /// <summary>
     /// 移动的速度
     /// </summary>
-    public float MoveSpeed { get; private set; } = 10.0f;
+    public float MoveSpeed { get; private set; } = 20.0f;
 
     #endregion
 

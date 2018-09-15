@@ -13,13 +13,19 @@
           <e p="Hero.cs" t="Include" />
           <e p="IDinfo.cs" t="Include" />
           <e p="Level" t="Include">
+            <e p="GameState.cs" t="Include" />
             <e p="Level1" t="Include">
               <e p="Level1Control.cs" t="Include" />
+            </e>
+            <e p="Level2" t="Include">
+              <e p="Level2Control.cs" t="Include" />
+              <e p="TileHero.cs" t="Include" />
             </e>
             <e p="LevelControl.cs" t="Include" />
           </e>
           <e p="LuaRunner.cs" t="Include" />
           <e p="ScriptMang.cs" t="Include" />
+          <e p="TileCtrl.cs" t="Include" />
         </e>
         <e p="XLua" t="Include">
           <e p="CHANGELOG.txt" t="Include" />
