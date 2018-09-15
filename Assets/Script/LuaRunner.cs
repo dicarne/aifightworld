@@ -8,9 +8,12 @@ public class LuaRunner : MonoBehaviour
 {
     protected LuaEnv LuaEnv;
 
+
+    
     // Use this for initialization
     protected void Start()
     {
+
         LuaEnv = new LuaEnv();
         BindEvent += Binding;
         BindEvent += BindLocalMethod;

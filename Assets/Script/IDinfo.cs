@@ -11,8 +11,11 @@ public class IDinfo : MonoBehaviour
 	public string Type;
 	
 	// Use this for initialization
+	
+	protected LevelControl LevelControl;
 	void Start () {
-		
+		LevelControl = GameObject.Find("Manager").GetComponent<LevelControl>();
+		LevelControl.AssignObj(this);
 	}
 	
 	// Update is called once per frame

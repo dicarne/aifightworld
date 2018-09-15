@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections;
 using System.Collections.Generic;
+using System.Linq;
 using UnityEngine;
 using XLua;
 
@@ -55,7 +56,6 @@ public class Hero : LuaRunner
     {
          
         var diff = _heroData.angle - transform.rotation.eulerAngles.z;
-        Debug.Log(diff);
         if (!(Math.Abs(diff) >= 5)) return;
         // TODO: 旋转方向不对
         if (diff > 0)
@@ -70,28 +70,20 @@ public class Hero : LuaRunner
 
     public List<LookInfo> Witness()
     {
-        //var hitResult = Physics2D.RaycastAll(HitTarget.transform.position, HitTarget.transform.forward, 10000,1<<LayerMask.NameToLayer("GameModel"));
         RaycastHit2D[] hitResult = new RaycastHit2D[10];
         Physics2D.LinecastNonAlloc(new Vector2(HitTarget.transform.position.x, HitTarget.transform.position.y),
             new Vector2(HeroHitEnd.transform.position.x, HeroHitEnd.transform.position.y), hitResult,
             1 << LayerMask.NameToLayer("GameModel"));
-        Debug.DrawRay(HitTarget.transform.position, HitTarget.transform.forward, Color.red, 10000);
-        var result = new List<LookInfo>();
 
-        foreach (var hitobj in hitResult)
-        {
-            if (hitobj.transform == null) continue;
-            Debug.Log(hitobj.transform.name);
-            result.Add(new LookInfo()
+        return (from hitobj in hitResult
+            where hitobj.transform != null
+            select new LookInfo()
             {
                 position = new Vector2(hitobj.transform.position.x, hitobj.transform.position.y),
                 angle = hitobj.transform.eulerAngles.z,
                 Name = hitobj.transform.gameObject.GetComponent<IDinfo>().Name,
                 Type = hitobj.transform.gameObject.GetComponent<IDinfo>().Type
-            });
-        }
-
-        return result;
+            }).ToList();
     }
 
     #region Data
@@ -125,7 +117,7 @@ public class Hero2Lua
     public float aimX;
     public float aimY;
     public float angle;
-    private Hero _hero;
+    private readonly Hero _hero;
 
     public Hero2Lua(Hero h)
     {
@@ -146,6 +138,7 @@ public class Hero2Lua
         this.angle = angle;
     }
 
+    [LuaCallCSharp]
     public void StopMove()
     {
         aimX = myX;
