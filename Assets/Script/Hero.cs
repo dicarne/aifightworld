@@ -6,6 +6,8 @@ using XLua;
 
 public class Hero : LuaRunner
 {
+    private GameObject HitTarget;
+    private GameObject HeroHitEnd;
     protected override void BindLocalMethod()
     {
         heroTick = FindLuaFunc<HeroTick>("HeroTick");
@@ -13,9 +15,13 @@ public class Hero : LuaRunner
 
     protected override void OStart()
     {
-        _heroData = new Hero2Lua();
-        _heroData.myX = gameObject.transform.position.x;
-        _heroData.myY = gameObject.transform.position.y;
+        HitTarget = gameObject.transform.Find("HeroHitTarget").gameObject;
+        HeroHitEnd = gameObject.transform.Find("HeroHitEnd").gameObject;
+        _heroData = new Hero2Lua(this)
+        {
+            myX = gameObject.transform.position.x,
+            myY = gameObject.transform.position.y
+        };
         _heroData.StopMove();
     }
 
@@ -47,9 +53,11 @@ public class Hero : LuaRunner
     /// </summary>
     private void Rotate()
     {
+         
         var diff = _heroData.angle - transform.rotation.eulerAngles.z;
-
-        if (!(Math.Abs(diff) >= 1)) return;
+        Debug.Log(diff);
+        if (!(Math.Abs(diff) >= 5)) return;
+        // TODO: 旋转方向不对
         if (diff > 0)
         {
             transform.Rotate(0, 0, 30.0f * Time.deltaTime);
@@ -60,13 +68,39 @@ public class Hero : LuaRunner
         }
     }
 
+    public List<LookInfo> Witness()
+    {
+        //var hitResult = Physics2D.RaycastAll(HitTarget.transform.position, HitTarget.transform.forward, 10000,1<<LayerMask.NameToLayer("GameModel"));
+        RaycastHit2D[] hitResult = new RaycastHit2D[10];
+        Physics2D.LinecastNonAlloc(new Vector2(HitTarget.transform.position.x, HitTarget.transform.position.y),
+            new Vector2(HeroHitEnd.transform.position.x, HeroHitEnd.transform.position.y), hitResult,
+            1 << LayerMask.NameToLayer("GameModel"));
+        Debug.DrawRay(HitTarget.transform.position, HitTarget.transform.forward, Color.red, 10000);
+        var result = new List<LookInfo>();
+
+        foreach (var hitobj in hitResult)
+        {
+            if (hitobj.transform == null) continue;
+            Debug.Log(hitobj.transform.name);
+            result.Add(new LookInfo()
+            {
+                position = new Vector2(hitobj.transform.position.x, hitobj.transform.position.y),
+                angle = hitobj.transform.eulerAngles.z,
+                Name = hitobj.transform.gameObject.GetComponent<IDinfo>().Name,
+                Type = hitobj.transform.gameObject.GetComponent<IDinfo>().Type
+            });
+        }
+
+        return result;
+    }
+
     #region Data
-    
+
     /// <summary>
     /// 储存与Lua交互的数据和方法
     /// </summary>
     private Hero2Lua _heroData;
-    
+
     /// <summary>
     /// 移动的速度
     /// </summary>
@@ -91,6 +125,12 @@ public class Hero2Lua
     public float aimX;
     public float aimY;
     public float angle;
+    private Hero _hero;
+
+    public Hero2Lua(Hero h)
+    {
+        _hero = h;
+    }
 
     [LuaCallCSharp]
     public void MoveToXY(float x, float y)
@@ -102,6 +142,7 @@ public class Hero2Lua
     [LuaCallCSharp]
     public void Rotate(float angle)
     {
+        if (angle < 0) angle += 360;
         this.angle = angle;
     }
 
@@ -109,5 +150,11 @@ public class Hero2Lua
     {
         aimX = myX;
         aimY = myY;
+    }
+    
+    [LuaCallCSharp]
+    public List<LookInfo> Look()
+    {
+        return _hero.Witness();
     }
 }
