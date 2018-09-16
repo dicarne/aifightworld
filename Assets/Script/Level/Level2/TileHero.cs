@@ -64,18 +64,28 @@ public class TileHeroData
         switch (direction)
         {
             case 0:
-                return LookLeft();
+                return LookHere();
             case 1:
-                return LookUp();
+                return LookLeft();
             case 2:
-                return LookRight();
+                return LookUp();
             case 3:
+                return LookRight();
+            case 4:
                 return LookDown();
             default:
                 break;
         }
 
         return null;
+    }
+
+    [LuaCallCSharp]
+    public TileCtrl LookHere()
+    {
+        TileCtrl result;
+        var res = _hero.Level2Control.Map.TryGetValue(_hero.pos, out result);
+        return res ? result : null;
     }
 
     [LuaCallCSharp]
@@ -110,7 +120,7 @@ public class TileHeroData
         return res ? result : null;
     }
 
-
+    // TODO: 一回合只能行动一次
     public bool Move(int direction)
     {
         switch (direction)
@@ -164,5 +174,12 @@ public class TileHeroData
         if (tile == null || tile.HeroOnIt != TileCtrl.EPlayer.No) return false;
         _hero.pos += Vector2Int.down;
         return true;
+    }
+
+    [LuaCallCSharp]
+    public bool Build()
+    {
+        // TODO: 建造一次占领，然后建造一次增加一次建筑等级
+        return false;
     }
 }
