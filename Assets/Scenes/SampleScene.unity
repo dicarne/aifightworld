@@ -1484,6 +1484,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   InputField: {fileID: 599613122}
+  AnotherGameObj: {fileID: 0}
   TargetGameObj: {fileID: 0}
 --- !u!4 &602752221
 Transform:

@@ -3,7 +3,9 @@ using System.Collections;
 using System.Collections.Generic;
 using System.Runtime.InteropServices.ComTypes;
 using UnityEngine;
+using UnityEngine.Tilemaps;
 using XLua;
+using XLua.LuaDLL;
 
 public class TileHero : LuaRunner
 {
@@ -25,14 +27,40 @@ public class TileHero : LuaRunner
     }
 
     private float _time = 0;
-
+    private TileCtrl lasttile = null;
     protected override void OUpdate()
     {
         // 一秒钟唤醒一次
         _time += Time.deltaTime;
-        if (!(_time >= 1.0f)) return;
+        if (!(_time >= 0.2f)) return;
         _time = 0;
         OnTurn();
+        if (lasttile) lasttile.Lock = false;
+        if (data.act.op == TileHeroData.Op.Build)
+        {
+            TileCtrl tile;
+            if (Level2Control.Map.TryGetValue(new Vector2Int(data.act.i, data.act.j), out tile))
+            {
+                tile.Lock = true;
+                if (tile.Player == Player || tile.Player == TileCtrl.EPlayer.No)
+                {
+                    tile.Player = Player;
+                    tile.Type = TileCtrl.EType.Building;
+                    tile.BuildingLevel += 1;
+                }
+                else
+                {
+                    tile.BuildingLevel -= 1;
+                    if (tile.BuildingLevel < 0)
+                    {
+                        tile.BuildingLevel = 0;
+                        tile.Player = TileCtrl.EPlayer.No;
+                        tile.Type = TileCtrl.EType.Land;
+                    }
+
+                }
+            }
+        }
     }
 
     private void OnTurn()
@@ -42,6 +70,7 @@ public class TileHero : LuaRunner
 
     #region Delegate
 
+    [CSharpCallLua]
     delegate void TurnMethod(TileHeroData data);
 
     private TurnMethod _tileTick;
@@ -141,6 +170,59 @@ public class TileHeroData
     }
 
     [LuaCallCSharp]
+    public bool CanMove(int i, int j)
+    {
+        int count = 0;
+        TileCtrl tile;
+        if (!_hero.Level2Control.Map.TryGetValue(new Vector2Int(i, j), out tile))
+        {
+            return false;
+        }
+        if (_hero.Level2Control.Map.TryGetValue(new Vector2Int(i - 1, j - 1), out tile))
+        {
+            if (tile.Player == _hero.Player) count++;
+        }
+
+        if (_hero.Level2Control.Map.TryGetValue(new Vector2Int(i - 1, j), out tile))
+        {
+            if (tile.Player == _hero.Player) count++;
+        }
+
+        if (_hero.Level2Control.Map.TryGetValue(new Vector2Int(i - 1, j + 1), out tile))
+        {
+            if (tile.Player == _hero.Player) count++;
+        }
+
+        if (_hero.Level2Control.Map.TryGetValue(new Vector2Int(i, j - 1), out tile))
+        {
+            if (tile.Player == _hero.Player) count++;
+        }
+
+        if (_hero.Level2Control.Map.TryGetValue(new Vector2Int(i, j + 1), out tile))
+        {
+            if (tile.Player == _hero.Player) count++;
+        }
+
+        if (_hero.Level2Control.Map.TryGetValue(new Vector2Int(i + 1, j - 1), out tile))
+        {
+            if (tile.Player == _hero.Player) count++;
+        }
+
+        if (_hero.Level2Control.Map.TryGetValue(new Vector2Int(i + 1, j), out tile))
+        {
+            if (tile.Player == _hero.Player) count++;
+        }
+
+        if (_hero.Level2Control.Map.TryGetValue(new Vector2Int(i + 1, j + 1), out tile))
+        {
+            if (tile.Player == _hero.Player) count++;
+        }
+
+        if (count >= 1) return true;
+        else return false;
+    }
+
+    [LuaCallCSharp]
     public bool MoveLeft()
     {
         var tile = LookLeft();
@@ -182,4 +264,130 @@ public class TileHeroData
         // TODO: 建造一次占领，然后建造一次增加一次建筑等级
         return false;
     }
+
+    // ----------------------------
+    [LuaCallCSharp]
+    public TileInfo map(int i, int j)
+    {
+        TileCtrl tile;
+        var con = _hero.Level2Control.Map.TryGetValue(new Vector2Int(i, j), out tile);
+        if (!con) return new TileInfo() {Player = TileCtrl.EPlayer.No};
+        return new TileInfo()
+        {
+            Player = tile.Player,
+            Type = tile.Type
+        };
+    }
+
+    public enum Op
+    {
+        Sleep,
+        Build
+    }
+
+    public struct Act
+    {
+        public Op op;
+        public int i;
+        public int j;
+    }
+
+    public Act act;
+
+    [LuaCallCSharp]
+    public void Action(int i, int j, int op)
+    {
+        act = new Act();
+        switch (op)
+        {
+            case 0:
+                act.op = Op.Sleep;
+                break;
+            case 1:
+                act.op = Op.Build;
+                break;
+            default:
+                act.op = Op.Sleep;
+                break;
+        }
+
+        act.i = i;
+        act.j = j;
+    }
+
+
+    [LuaCallCSharp]
+    public int EmptyAround(int i, int j)
+    {
+        int count = 0;
+        TileCtrl tile;
+        if (_hero.Level2Control.Map.TryGetValue(new Vector2Int(i - 1, j - 1), out tile))
+        {
+            if (tile.Player == TileCtrl.EPlayer.No) count++;
+        }
+
+        if (_hero.Level2Control.Map.TryGetValue(new Vector2Int(i - 1, j), out tile))
+        {
+            if (tile.Player == TileCtrl.EPlayer.No) count++;
+        }
+
+        if (_hero.Level2Control.Map.TryGetValue(new Vector2Int(i - 1, j + 1), out tile))
+        {
+            if (tile.Player == TileCtrl.EPlayer.No) count++;
+        }
+
+        if (_hero.Level2Control.Map.TryGetValue(new Vector2Int(i, j - 1), out tile))
+        {
+            if (tile.Player == TileCtrl.EPlayer.No) count++;
+        }
+
+        if (_hero.Level2Control.Map.TryGetValue(new Vector2Int(i, j + 1), out tile))
+        {
+            if (tile.Player == TileCtrl.EPlayer.No) count++;
+        }
+
+        if (_hero.Level2Control.Map.TryGetValue(new Vector2Int(i + 1, j - 1), out tile))
+        {
+            if (tile.Player == TileCtrl.EPlayer.No) count++;
+        }
+
+        if (_hero.Level2Control.Map.TryGetValue(new Vector2Int(i + 1, j), out tile))
+        {
+            if (tile.Player == TileCtrl.EPlayer.No) count++;
+        }
+
+        if (_hero.Level2Control.Map.TryGetValue(new Vector2Int(i + 1, j + 1), out tile))
+        {
+            if (tile.Player == TileCtrl.EPlayer.No) count++;
+        }
+
+        return count;
+    }
+
+    [LuaCallCSharp]
+    public bool CanBuild(int i, int j)
+    {
+        TileCtrl tile;
+        if (_hero.Level2Control.Map.TryGetValue(new Vector2Int(i, j), out tile))
+        {
+            if (tile.Lock==true || (tile.Player == _hero.Player && tile.BuildingLevel >= 3))
+                return false;
+            return true;
+        }
+
+        
+        return false;
+    }
+
+    [LuaCallCSharp]
+    public TileCtrl.EPlayer Player
+    {
+        get { return _hero.Player; }
+    }
+}
+
+public struct TileInfo
+{
+    public TileCtrl.EType Type;
+    public TileCtrl.EPlayer Player;
 }

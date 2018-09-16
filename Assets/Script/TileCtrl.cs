@@ -17,21 +17,29 @@ public class TileCtrl : MonoBehaviour {
 		Factory,
 		Home
 	}
-	public EPlayer Player { get; set; }
-	public EType Type { get; set; }
-	public Vector2Int pos;
 
+	public EPlayer Player;
+	public EType Type;
+	public Vector2Int pos;
+	public int BuildingLevel = 0;
+	public Sprite[] sprites;
 	private Level2Control _level2Control;
+	public bool Lock = false;
+
+	public TextMesh text;
 	// Use this for initialization
 	void Start ()
 	{
+		_spriteRenderer = GetComponent<SpriteRenderer>();
 		_level2Control = GameObject.Find("Manager").GetComponent<Level2Control>();
 	}
 
+	private SpriteRenderer _spriteRenderer;
 	public EPlayer HeroOnIt { get; private set; } = EPlayer.No;
 
 	// Update is called once per frame
 	void Update () {
+		/*
 		foreach (var player in _level2Control.Players)
 		{
 			if (player.Hero.pos == pos)
@@ -43,6 +51,21 @@ public class TileCtrl : MonoBehaviour {
 				HeroOnIt = EPlayer.No;
 			}
 		}
+		*/
+		switch (Player)
+		{
+			case EPlayer.No:
+				_spriteRenderer.sprite = sprites[0];
+				break;
+			case EPlayer.Player0:
+				_spriteRenderer.sprite = sprites[1];
+				break;
+			case EPlayer.Player1:
+				_spriteRenderer.sprite = sprites[2];
+				break;
+		}
+
+		text.text = BuildingLevel.ToString();
 	}
 	
 	

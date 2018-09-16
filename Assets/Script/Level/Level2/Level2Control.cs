@@ -7,6 +7,12 @@ public class Level2Control : MonoBehaviour
 	public GameObject tile;
 
 	public GameObject root;
+
+	void Awake()
+	{
+		Players = new List<TileHeroInfo>();
+		Map = new Dictionary<Vector2Int, TileCtrl>();
+	}
 	// Use this for initialization
 	void Start () {
 		for (var i = 0; i < 10; i++)
@@ -19,7 +25,11 @@ public class Level2Control : MonoBehaviour
 				Map[new Vector2Int(i, j)].pos = new Vector2Int(i, j);
 			}
 		}
-		
+
+		Map[new Vector2Int(0, 0)].Player = TileCtrl.EPlayer.Player0;
+		Map[new Vector2Int(0, 0)].Type = TileCtrl.EType.Building;
+		Map[new Vector2Int(9, 9)].Player = TileCtrl.EPlayer.Player1;
+		Map[new Vector2Int(9, 9)].Type = TileCtrl.EType.Building;
 	}
 
 	public Dictionary<Vector2Int, TileCtrl> Map;

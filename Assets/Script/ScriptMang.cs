@@ -5,13 +5,15 @@ using UnityEngine.UI;
 
 public class ScriptMang : MonoBehaviour {
 	public InputField InputField;
+	public LuaRunner AnotherGameObj;
 
 	public LuaRunner TargetGameObj;
 	
 	// Use this for initialization
 	void Start ()
 	{
-		TargetGameObj = GameObject.Find("hero").GetComponent<LuaRunner>();
+		AnotherGameObj = GameObject.Find("Player1").GetComponent<LuaRunner>();
+		TargetGameObj = GameObject.Find("Player0").GetComponent<LuaRunner>();
 	}
 	
 	// Update is called once per frame
@@ -24,6 +26,7 @@ public class ScriptMang : MonoBehaviour {
 		if (TargetGameObj)
 		{
 			TargetGameObj.ChangeCode(InputField.text);
+			AnotherGameObj.ChangeCode(InputField.text);
 			Debug.Log("success");
 		}
 		else
