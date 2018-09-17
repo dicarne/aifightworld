@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections;
 using System.Collections.Generic;
+using UnityEditor;
 using UnityEngine;
 using UnityEngine.UI;
 
@@ -97,11 +98,14 @@ public class Level2Control : MonoBehaviour
 	public Text TextBlue;
 	public Text TextTurn;
 	private int turnnum = 0;
+	public int MaxTurn = 100;
 	IEnumerator Turn()
 	{
 		var AnotherGameObj = GameObject.Find("Player1").GetComponent<TileHero>();
 		var TargetGameObj = GameObject.Find("Player0").GetComponent<TileHero>();
-		while (true)
+		AnotherGameObj.ChangeCode("require 'script'");
+
+		while (turnnum<MaxTurn)
 		{
 			TextTurn.text = turnnum.ToString();
 			
@@ -140,10 +144,23 @@ public class Level2Control : MonoBehaviour
 				}
 			}
 		}
+
+		if (GetScore(TargetGameObj.Player) > GetScore(AnotherGameObj.Player))
+		{
+			WinPanel.SetActive(true);
+		}
+		else
+		{
+			FailedPanel.SetActive(true);
+		}
 	}
-	
+
+	public GameObject FailedPanel;
+	public GameObject WinPanel;
 	public void Reset()
 	{
+		FailedPanel.SetActive(false);
+		WinPanel.SetActive(false);
 		StopAllCoroutines();
 		foreach (var kv in Map)
 		{
@@ -156,6 +173,18 @@ public class Level2Control : MonoBehaviour
 		Map[new Vector2Int(9, 9)].Player = TileCtrl.EPlayer.Player1;
 		Map[new Vector2Int(9, 9)].Type = TileCtrl.EType.Building;
 		turnnum = 0;
+	}
+
+	public GameObject HelpPanel;
+
+	public void OpenHelpPanel()
+	{
+		HelpPanel.SetActive(true);
+	}
+
+	public void CloseHelpPanel()
+	{
+		HelpPanel.SetActive((false));
 	}
 }
 

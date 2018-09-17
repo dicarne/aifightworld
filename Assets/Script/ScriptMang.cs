@@ -26,7 +26,7 @@ public class ScriptMang : MonoBehaviour {
 		if (TargetGameObj)
 		{
 			TargetGameObj.ChangeCode(InputField.text);
-			AnotherGameObj.ChangeCode(InputField.text);
+			//AnotherGameObj.ChangeCode(InputField.text);
 			Debug.Log("success");
 		}
 		else

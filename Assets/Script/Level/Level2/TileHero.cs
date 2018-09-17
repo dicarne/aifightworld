@@ -13,10 +13,13 @@ public class TileHero : LuaRunner
     public Vector2Int pos;
     public Level2Control Level2Control;
     public TileCtrl.EPlayer Player;
-
+    private LuaFunction luaFunction;
     protected override void OStart()
     {
-        _tileTick = FindLuaFunc<TurnMethod>("OnTurn");
+        //_tileTick = FindLuaFunc<TurnMethod>("OnTurn");
+        
+        luaFunction = LuaEnv.Global.Get<LuaFunction>("OnTurn");
+
         data = new TileHeroData(this);
         Level2Control = GameObject.Find("Manager").GetComponent<Level2Control>();
         Level2Control.Players.Add(new Level2Control.TileHeroInfo()
@@ -24,6 +27,7 @@ public class TileHero : LuaRunner
             Player = Player,
             Hero = this
         });
+
     }
 
     private float _time = 0;
@@ -43,8 +47,9 @@ public class TileHero : LuaRunner
 
     public void OnTurn()
     {
-        _tileTick?.Invoke(data);
-        
+        //_tileTick?.Invoke(data);
+        object[] vals = luaFunction.Call(new object[]{data}, new Type[] { });
+
         if (data.act.op == TileHeroData.Op.Build)
         {
             TileCtrl tile;
@@ -76,7 +81,7 @@ public class TileHero : LuaRunner
 
     [CSharpCallLua]
     delegate void TurnMethod(TileHeroData data);
-
+    [CSharpCallLua]
     private TurnMethod _tileTick;
 
     #endregion

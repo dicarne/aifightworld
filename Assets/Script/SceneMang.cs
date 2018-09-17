@@ -2,9 +2,10 @@
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.SceneManagement;
+using XLua;
+
 
 public class SceneMang : MonoBehaviour {
-
 	// Use this for initialization
 	void Start () {
 		
@@ -24,4 +25,19 @@ public class SceneMang : MonoBehaviour {
 	{
 		SceneManager.LoadScene("Battle");
 	}
+
+	public void Exit()
+	{
+		Application.Quit();
+	}
+
+}
+
+public static class black
+{
+	[BlackList]
+	public static List<List<string>> BlackList = new List<List<string>>()  {
+		new List<string>(){"UnityEngine.Light", "shadowAngle"},
+		new List<string>(){"UnityEngine.Light", "shadowRadius"},
+	};
 }

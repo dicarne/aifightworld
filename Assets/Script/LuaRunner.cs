@@ -47,7 +47,7 @@ public class LuaRunner : MonoBehaviour
 
     public void ChangeCode(string newCode)
     {
-        Code = newCode;
+        Code = "require 'tilelib'\n" + newCode;
         LuaEnv.DoString(Code);
         
         BindEvent?.Invoke();
