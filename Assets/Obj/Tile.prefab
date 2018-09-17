@@ -143,10 +143,19 @@ MonoBehaviour:
   Type: 0
   pos: {x: 0, y: 0}
   BuildingLevel: 0
-  sprites:
-  - {fileID: 21300000, guid: 54059af2d4aebb6499403964e7669190, type: 3}
-  - {fileID: 21300000, guid: 6b3c8a5e47b1cb44b8af23297e5c0f67, type: 3}
+  NoPlayer: {fileID: 21300000, guid: 54059af2d4aebb6499403964e7669190, type: 3}
+  RedSprites:
+  - {fileID: 21300000, guid: 02c0b99e723d3484cb1ba3e7ce0b8d0b, type: 3}
+  - {fileID: 21300000, guid: 5dd6119dcb6604344b2d5565e513e200, type: 3}
+  - {fileID: 21300000, guid: 4bd1647f935e13c499e5f9d372b4e863, type: 3}
   - {fileID: 21300000, guid: 87fcdfa0e45e12248a2837d4831366ce, type: 3}
+  - {fileID: 21300000, guid: 6b1c8ffe4e406274f88d4acdc05b6bbd, type: 3}
+  BlueSprites:
+  - {fileID: 21300000, guid: 51a0afdcb66b39848ad033104d7dd17d, type: 3}
+  - {fileID: 21300000, guid: 05db400568959b844b2ca11842425af7, type: 3}
+  - {fileID: 21300000, guid: 584bc12f8ecc4ff42b5a124e3dd46bce, type: 3}
+  - {fileID: 21300000, guid: 6b3c8a5e47b1cb44b8af23297e5c0f67, type: 3}
+  - {fileID: 21300000, guid: e8b91ffc1ab00a844a1c4c344d3b18a8, type: 3}
   Lock: 0
   text: {fileID: 102241151250840082}
 --- !u!212 &212270143911992980

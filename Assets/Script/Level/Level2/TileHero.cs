@@ -51,7 +51,7 @@ public class TileHero : LuaRunner
                 else
                 {
                     tile.BuildingLevel -= 1;
-                    if (tile.BuildingLevel < 0)
+                    if (tile.BuildingLevel <= 0)
                     {
                         tile.BuildingLevel = 0;
                         tile.Player = TileCtrl.EPlayer.No;

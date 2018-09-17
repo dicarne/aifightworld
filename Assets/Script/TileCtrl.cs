@@ -21,8 +21,10 @@ public class TileCtrl : MonoBehaviour {
 	public EPlayer Player;
 	public EType Type;
 	public Vector2Int pos;
-	public int BuildingLevel = 0;
-	public Sprite[] sprites;
+	public int BuildingLevel = 1;
+	public Sprite NoPlayer;
+	public Sprite[] RedSprites;
+	public Sprite[] BlueSprites;
 	private Level2Control _level2Control;
 	public bool Lock = false;
 
@@ -39,6 +41,7 @@ public class TileCtrl : MonoBehaviour {
 
 	// Update is called once per frame
 	void Update () {
+
 		/*
 		foreach (var player in _level2Control.Players)
 		{
@@ -55,13 +58,13 @@ public class TileCtrl : MonoBehaviour {
 		switch (Player)
 		{
 			case EPlayer.No:
-				_spriteRenderer.sprite = sprites[0];
+				_spriteRenderer.sprite = NoPlayer;
 				break;
 			case EPlayer.Player0:
-				_spriteRenderer.sprite = sprites[1];
+				_spriteRenderer.sprite = BlueSprites[BuildingLevel];
 				break;
 			case EPlayer.Player1:
-				_spriteRenderer.sprite = sprites[2];
+				_spriteRenderer.sprite = RedSprites[BuildingLevel];
 				break;
 		}
 
