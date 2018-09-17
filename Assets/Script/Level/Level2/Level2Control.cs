@@ -33,10 +33,13 @@ public class Level2Control : MonoBehaviour
 		Map[new Vector2Int(9, 9)].Player = TileCtrl.EPlayer.Player1;
 		Map[new Vector2Int(9, 9)].Type = TileCtrl.EType.Building;
 
-
-		StartCoroutine(Turn());
 	}
 
+	public void StartTurn()
+	{
+		StartCoroutine(Turn());
+	}
+	
 	public Dictionary<Vector2Int, TileCtrl> Map;
 
 	public struct TileHeroInfo
@@ -101,6 +104,7 @@ public class Level2Control : MonoBehaviour
 		while (true)
 		{
 			TextTurn.text = turnnum.ToString();
+			
 			turnnum++;
 			TargetGameObj.OnTurn();
 			TextBlue.text = GetScore(TileCtrl.EPlayer.Player0).ToString();
@@ -136,6 +140,22 @@ public class Level2Control : MonoBehaviour
 				}
 			}
 		}
+	}
+	
+	public void Reset()
+	{
+		StopAllCoroutines();
+		foreach (var kv in Map)
+		{
+			kv.Value.Player = TileCtrl.EPlayer.No;
+			kv.Value.BuildingLevel = 0;
+			kv.Value.Type = TileCtrl.EType.Land;
+		}
+		Map[new Vector2Int(0, 0)].Player = TileCtrl.EPlayer.Player0;
+		Map[new Vector2Int(0, 0)].Type = TileCtrl.EType.Building;
+		Map[new Vector2Int(9, 9)].Player = TileCtrl.EPlayer.Player1;
+		Map[new Vector2Int(9, 9)].Type = TileCtrl.EType.Building;
+		turnnum = 0;
 	}
 }
 

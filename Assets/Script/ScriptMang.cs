@@ -34,4 +34,7 @@ public class ScriptMang : MonoBehaviour {
 			Debug.Log("failed");
 		}
 	}
+	
+
+	
 }
