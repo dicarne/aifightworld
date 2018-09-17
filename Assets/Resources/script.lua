@@ -1,6 +1,7 @@
 local Building = CS.TileCtrl.EType.Building
 local Empty = CS.TileCtrl.EType.Land
 local last = {i = 0, j = 0, sum = 0, op = 0, score = 0}
+math.randomseed(os.time())
 function OnTurn(self)
     local de = CS.UnityEngine.Debug
     local best = {i = 0, j = 0, sum = 0, op = 0, score = 0}
@@ -10,24 +11,25 @@ function OnTurn(self)
             if (self:CanMove(i,j))
             then
                 if(self:map(i,j).Type == Empty and self:CanBuild(i,j)) then
-                    local score = self:EmptyAround(i,j) * 40
-                    if(score >= best.sum and not (self.MyScore == last.score and last.i == i && last.j == j)) then
+                    local score = self:EmptyAround(i,j) * 30 * ran()
+                    if(score >= best.sum and not (self.MyScore == last.score and last.i == i and last.j == j)) then
                         best.op = 1
                         best.i = i
                         best.j = j
                         best.sum = score
                     end
-                elseif(self:map(i,j).Type == Building and self:map(i,j).Player~=self.Player and self:CanBuild(i,j)) then
-                    local score = (7 - self:EmptyAround(i,j)) * 20
-                    if(score >= best.sum and not (self.MyScore == last.score and last.i == i && last.j == j)) then
+                elseif(self:map(i,j).Type == Building and self:map(i,j).Player~=self.Player) then
+                    local score = (7 - self:EmptyAround(i,j)) * 20 * ran()
+                    if(score >= best.sum and not (self.MyScore == last.score and last.i == i and last.j == j)) then
                         best.op = 1
                         best.i = i
                         best.j = j
                         best.sum = score
                     end
                 elseif(self:map(i,j).Type == Building and self:map(i,j).Player==self.Player and self:CanBuild(i,j)) then
-                    local score = self:EmptyAround(i,j) * 8
-                    if(score >= best.sum and not (self.MyScore == last.score and last.i == i && last.j == j)) then
+                   
+                    local score = self:EmptyAround(i,j) * 20 * self:map(i,j).BuildingLevel * ran()
+                    if(score >= best.sum and not (self.MyScore == last.score and last.i == i and last.j == j)) then
                         best.op = 1
                         best.i = i
                         best.j = j
@@ -44,4 +46,8 @@ function OnTurn(self)
     de.Log(best.j)
     self:Action(best.i,best.j,best.op)
     last = best
+end
+
+function ran()
+    return math.random()
 end

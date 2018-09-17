@@ -70,7 +70,8 @@ public class TileCtrl : MonoBehaviour {
 
 		text.text = BuildingLevel.ToString();
 	}
-	
+
+
 	
 }
 

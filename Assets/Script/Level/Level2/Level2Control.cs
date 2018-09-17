@@ -2,6 +2,7 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.UI;
 
 public class Level2Control : MonoBehaviour
 {
@@ -31,6 +32,9 @@ public class Level2Control : MonoBehaviour
 		Map[new Vector2Int(0, 0)].Type = TileCtrl.EType.Building;
 		Map[new Vector2Int(9, 9)].Player = TileCtrl.EPlayer.Player1;
 		Map[new Vector2Int(9, 9)].Type = TileCtrl.EType.Building;
+
+
+		StartCoroutine(Turn());
 	}
 
 	public Dictionary<Vector2Int, TileCtrl> Map;
@@ -76,6 +80,62 @@ public class Level2Control : MonoBehaviour
 		}
 
 		return sum;
+	}
+
+	private static Vector2Int[] dir =
+	{
+		new Vector2Int(0, -1),
+		new Vector2Int(-1, 0),
+		new Vector2Int(1, 0),
+		new Vector2Int(0, 1),
+	};
+
+	public Text TextRed;
+	public Text TextBlue;
+	public Text TextTurn;
+	private int turnnum = 0;
+	IEnumerator Turn()
+	{
+		var AnotherGameObj = GameObject.Find("Player1").GetComponent<TileHero>();
+		var TargetGameObj = GameObject.Find("Player0").GetComponent<TileHero>();
+		while (true)
+		{
+			TextTurn.text = turnnum.ToString();
+			turnnum++;
+			TargetGameObj.OnTurn();
+			TextBlue.text = GetScore(TileCtrl.EPlayer.Player0).ToString();
+			yield return new WaitForSeconds(0.2f);
+			AnotherGameObj.OnTurn();
+			TextRed.text = GetScore(TileCtrl.EPlayer.Player1).ToString();
+			yield return new WaitForSeconds(0.2f);
+			foreach (var tl in Map)
+			{
+				if(tl.Value.Player!=TileCtrl.EPlayer.No) continue;
+				int countA = 0;
+				int countB = 0;
+				for (int i = 0; i < 4; i++)
+				{
+					TileCtrl t;
+					if (Map.TryGetValue(tl.Value.pos + dir[i], out t))
+					{
+						if (t.Player == TileCtrl.EPlayer.Player0) countA++;
+						if (t.Player == TileCtrl.EPlayer.Player1) countB++;
+					}
+				}
+
+				if (countA == 4)
+				{
+					tl.Value.Player = TileCtrl.EPlayer.Player0;
+					tl.Value.BuildingLevel = 3;
+					tl.Value.Type = TileCtrl.EType.Building;
+				}else if (countB == 4)
+				{
+					tl.Value.Player = TileCtrl.EPlayer.Player1;
+					tl.Value.BuildingLevel = 3;
+					tl.Value.Type = TileCtrl.EType.Building;
+				}
+			}
+		}
 	}
 }
 

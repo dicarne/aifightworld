@@ -34,8 +34,17 @@ public class TileHero : LuaRunner
         _time += Time.deltaTime;
         if (!(_time >= 0.2f)) return;
         _time = 0;
-        OnTurn();
+        //OnTurn();
         if (lasttile) lasttile.Lock = false;
+        
+    }
+    
+
+
+    public void OnTurn()
+    {
+        _tileTick?.Invoke(data);
+        
         if (data.act.op == TileHeroData.Op.Build)
         {
             TileCtrl tile;
@@ -61,11 +70,6 @@ public class TileHero : LuaRunner
                 }
             }
         }
-    }
-
-    private void OnTurn()
-    {
-        _tileTick?.Invoke(data);
     }
 
     #region Delegate
@@ -275,7 +279,8 @@ public class TileHeroData
         return new TileInfo()
         {
             Player = tile.Player,
-            Type = tile.Type
+            Type = tile.Type,
+            BuildingLevel = tile.BuildingLevel
         };
     }
 
@@ -370,7 +375,7 @@ public class TileHeroData
         TileCtrl tile;
         if (_hero.Level2Control.Map.TryGetValue(new Vector2Int(i, j), out tile))
         {
-            if (tile.Lock==true || (tile.Player == _hero.Player && tile.BuildingLevel >= 3))
+            if (tile.Player == _hero.Player && tile.BuildingLevel >= 4)
                 return false;
             return true;
         }
@@ -396,4 +401,5 @@ public struct TileInfo
 {
     public TileCtrl.EType Type;
     public TileCtrl.EPlayer Player;
+    public int BuildingLevel;
 }
