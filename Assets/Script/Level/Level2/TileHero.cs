@@ -384,6 +384,12 @@ public class TileHeroData
     {
         get { return _hero.Player; }
     }
+    
+    [LuaCallCSharp]
+    public int Myscore
+    {
+        get { return _hero.Level2Control.GetScore(_hero.Player); }
+    }
 }
 
 public struct TileInfo

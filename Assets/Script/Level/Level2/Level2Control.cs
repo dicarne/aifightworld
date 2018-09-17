@@ -1,4 +1,5 @@
-﻿using System.Collections;
+﻿using System;
+using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
@@ -44,6 +45,37 @@ public class Level2Control : MonoBehaviour
 	// Update is called once per frame
 	void Update () {
 		
+	}
+	
+	public int GetScore(TileCtrl.EPlayer player)
+	{
+		var sum = 0;
+		for (int i = 0; i < 10; i++)
+		{
+			for (int j = 0; j < 10; j++)
+			{
+				var tile = Map[new Vector2Int(i, j)];
+				if (tile.Player == player)
+				{
+					switch (tile.Type)
+					{
+						case TileCtrl.EType.Land:
+							break;
+						case TileCtrl.EType.Building:
+							sum += tile.BuildingLevel * 10;
+							break;
+						case TileCtrl.EType.Factory:
+							break;
+						case TileCtrl.EType.Home:
+							break;
+						default:
+							throw new ArgumentOutOfRangeException();
+					}
+				}
+			}
+		}
+
+		return sum;
 	}
 }
 
