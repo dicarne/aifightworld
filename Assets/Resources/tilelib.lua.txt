@@ -1,0 +1,2 @@
+Building = CS.TileCtrl.EType.Building
+Empty = CS.TileCtrl.EType.Land

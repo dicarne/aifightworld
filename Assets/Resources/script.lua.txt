@@ -1,0 +1,47 @@
+
+local last = {i = 0, j = 0, sum = 0, op = 0, score = 0}
+math.randomseed(os.time())
+function OnTurn(self)
+    local best = {i = 0, j = 0, sum = 0, op = 0, score = 0}
+    local sum = 0;
+    for i = 0, 10 do
+        for j = 0, 10 do
+            if (self:CanMove(i,j))
+            then
+                if(self:map(i,j).Type == Empty and self:CanBuild(i,j)) then
+                    local score = self:EmptyAround(i,j) * 30 * ran()
+                    if(score >= best.sum and not (self.MyScore == last.score and last.i == i and last.j == j)) then
+                        best.op = 1
+                        best.i = i
+                        best.j = j
+                        best.sum = score
+                    end
+                elseif(self:map(i,j).Type == Building and self:map(i,j).Player~=self.Player) then
+                    local score = (7 - self:EmptyAround(i,j)) * 20 * ran()
+                    if(score >= best.sum and not (self.MyScore == last.score and last.i == i and last.j == j)) then
+                        best.op = 1
+                        best.i = i
+                        best.j = j
+                        best.sum = score
+                    end
+                elseif(self:map(i,j).Type == Building and self:map(i,j).Player==self.Player and self:CanBuild(i,j)) then
+                   
+                    local score = self:EmptyAround(i,j) * 20 * self:map(i,j).BuildingLevel * ran()
+                    if(score >= best.sum and not (self.MyScore == last.score and last.i == i and last.j == j)) then
+                        best.op = 1
+                        best.i = i
+                        best.j = j
+                        best.sum = score
+                    end
+                end
+            end
+        end 
+    end
+    best.score = self.MyScore
+    self:Action(best.i,best.j,best.op)
+    last = best
+end
+
+function ran()
+    return math.random()
+end
