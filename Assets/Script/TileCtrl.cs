@@ -41,20 +41,7 @@ public class TileCtrl : MonoBehaviour {
 
 	// Update is called once per frame
 	void Update () {
-
-		/*
-		foreach (var player in _level2Control.Players)
-		{
-			if (player.Hero.pos == pos)
-			{
-				HeroOnIt = player.Hero.Player;
-			}
-			else
-			{
-				HeroOnIt = EPlayer.No;
-			}
-		}
-		*/
+		
 		switch (Player)
 		{
 			case EPlayer.No:

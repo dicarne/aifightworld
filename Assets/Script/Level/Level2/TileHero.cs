@@ -14,10 +14,11 @@ public class TileHero : LuaRunner
     public Level2Control Level2Control;
     public TileCtrl.EPlayer Player;
     private LuaFunction luaFunction;
+
     protected override void OStart()
     {
         //_tileTick = FindLuaFunc<TurnMethod>("OnTurn");
-        
+
         luaFunction = LuaEnv.Global.Get<LuaFunction>("OnTurn");
 
         data = new TileHeroData(this);
@@ -27,11 +28,11 @@ public class TileHero : LuaRunner
             Player = Player,
             Hero = this
         });
-
     }
 
     private float _time = 0;
     private TileCtrl lasttile = null;
+
     protected override void OUpdate()
     {
         // 一秒钟唤醒一次
@@ -40,15 +41,15 @@ public class TileHero : LuaRunner
         _time = 0;
         //OnTurn();
         if (lasttile) lasttile.Lock = false;
-        
     }
-    
 
-
+    /// <summary>
+    /// 每回合执行
+    /// </summary>
     public void OnTurn()
     {
         //_tileTick?.Invoke(data);
-        object[] vals = luaFunction.Call(new object[]{data}, new Type[] { });
+        object[] vals = luaFunction.Call(new object[] {data}, new Type[] { });
 
         if (data.act.op == TileHeroData.Op.Build)
         {
@@ -71,7 +72,6 @@ public class TileHero : LuaRunner
                         tile.Player = TileCtrl.EPlayer.No;
                         tile.Type = TileCtrl.EType.Land;
                     }
-
                 }
             }
         }
@@ -81,8 +81,8 @@ public class TileHero : LuaRunner
 
     [CSharpCallLua]
     delegate void TurnMethod(TileHeroData data);
-    [CSharpCallLua]
-    private TurnMethod _tileTick;
+
+    [CSharpCallLua] private TurnMethod _tileTick;
 
     #endregion
 }
@@ -178,6 +178,12 @@ public class TileHeroData
         return false;
     }
 
+    /// <summary>
+    /// 是否能移动到该格子
+    /// </summary>
+    /// <param name="i"></param>
+    /// <param name="j"></param>
+    /// <returns></returns>
     [LuaCallCSharp]
     public bool CanMove(int i, int j)
     {
@@ -187,6 +193,7 @@ public class TileHeroData
         {
             return false;
         }
+
         if (_hero.Level2Control.Map.TryGetValue(new Vector2Int(i - 1, j - 1), out tile))
         {
             if (tile.Player == _hero.Player) count++;
@@ -304,6 +311,12 @@ public class TileHeroData
 
     public Act act;
 
+    /// <summary>
+    /// 执行行动
+    /// </summary>
+    /// <param name="i"></param>
+    /// <param name="j"></param>
+    /// <param name="op"></param>
     [LuaCallCSharp]
     public void Action(int i, int j, int op)
     {
@@ -325,7 +338,12 @@ public class TileHeroData
         act.j = j;
     }
 
-
+    /// <summary>
+    /// 周围有几个空格子
+    /// </summary>
+    /// <param name="i"></param>
+    /// <param name="j"></param>
+    /// <returns></returns>
     [LuaCallCSharp]
     public int EmptyAround(int i, int j)
     {
@@ -374,6 +392,12 @@ public class TileHeroData
         return count;
     }
 
+    /// <summary>
+    /// 该格子是否能建造
+    /// </summary>
+    /// <param name="i"></param>
+    /// <param name="j"></param>
+    /// <returns></returns>
     [LuaCallCSharp]
     public bool CanBuild(int i, int j)
     {
@@ -385,7 +409,7 @@ public class TileHeroData
             return true;
         }
 
-        
+
         return false;
     }
 
@@ -394,7 +418,7 @@ public class TileHeroData
     {
         get { return _hero.Player; }
     }
-    
+
     [LuaCallCSharp]
     public int Myscore
     {

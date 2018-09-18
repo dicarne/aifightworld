@@ -21,6 +21,9 @@ public class ScriptMang : MonoBehaviour {
 		
 	}
 
+	/// <summary>
+	/// 代码框结束编辑
+	/// </summary>
 	public void EndEdit()
 	{
 		if (TargetGameObj)

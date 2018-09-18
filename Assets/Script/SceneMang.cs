@@ -35,6 +35,9 @@ public class SceneMang : MonoBehaviour {
 
 public static class black
 {
+	/// <summary>
+	/// 代码生成黑名单，这些会报错
+	/// </summary>
 	[BlackList]
 	public static List<List<string>> BlackList = new List<List<string>>()  {
 		new List<string>(){"UnityEngine.Light", "shadowAngle"},
